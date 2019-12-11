@@ -8,7 +8,9 @@ tokens = (
 	'AND',
 	'NOT',
 	'LPAREN',
-	'RPAREN'
+	'RPAREN',
+	'COMMA',
+	'INF'
 )
 
 t_VAR = r'[A-Z][0-9A-Z\']*'
@@ -18,6 +20,8 @@ t_AND = r'&'
 t_NOT = r'!'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
+t_COMMA = r','
+t_INF = r'\|-'
 t_ignore  = ' \t\n'
 
 def t_error(t):
@@ -27,6 +31,8 @@ lexer = lex.lex()
 
 
 precedence = (
+	('left', 'INF'),
+	('left', 'COMMA'),
 	('right', 'IMPLY'),
 	('left', 'OR'),
 	('left', 'AND'),
@@ -35,21 +41,23 @@ precedence = (
 
 names = {}
 
-def p_top_group(p):
+def p_expression_group(p):
 	'expression : LPAREN expression RPAREN'
 	p[0] = p[2]
 
-def p_top_full(p):
-	'''expression : expression IMPLY expression
+def p_expression_full(p):
+	'''expression : expression INF expression
+	| expression COMMA expression
+	| expression IMPLY expression
 	| expression OR expression
 	| expression AND expression'''
 	p[0] = '(' + p[2] + ',' + p[1] + ',' + p[3] + ')'
 
-def p_top_var(p):
+def p_expression_var(p):
 	'expression : VAR'
 	p[0] = p[1]
 
-def p_top_not(p):
+def p_expression_not(p):
 	'expression : NOT expression'
 	p[0] = '(' + p[1] + p[2] + ')'
 

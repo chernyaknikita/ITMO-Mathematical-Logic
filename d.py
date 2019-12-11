@@ -10,7 +10,8 @@ tokens = (
 	'NOT',
 	'LPAREN',
 	'RPAREN',
-	'COMMA'
+	'COMMA',
+	'INF'
 )
 
 t_VAR = r'[A-Z][0-9A-Z\']*'
@@ -21,6 +22,7 @@ t_NOT = r'!'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_COMMA = r','
+t_INF = r'\|-'
 t_ignore  = ' \t\n'
 
 def t_error(t):
@@ -29,17 +31,19 @@ def t_error(t):
 lexer1 = lex.lex()
 
 axioms = [
-'A->B->A',
-'(A->B)->(A->B->C)->(A->C)',
-'A->B->A&B',
-'A&B->A',
-'A&B->B',
-'A->A|B',
-'B->A|B',
-'(A->C)->(B->C)->(A|B->C)',
-'(A->B)->(A->!B)->!A',
-'!!A->A',
-'(A&B->A)->B->(A&B->A)'
+# 'A->B->A',
+# '(A->B)->(A->B->C)->(A->C)',
+# 'A->B->A&B',
+# 'A&B->A',
+# 'A&B->B',
+# 'A->A|B',
+# 'B->A|B',
+# '(A->C)->(B->C)->(A|B->C)',
+# '(A->B)->(A->!B)->!A',
+# '!!A->A',
+# '(A&B->A)->B->(A&B->A)'
+'A->B, !B |- !A',
+'(A -> B), !B |- !A'
 ]
 
 
@@ -234,4 +238,7 @@ for i in axioms:
 # 	# 	print(i[0], ' : ', i[1])
 # 	# print('-' * 50)
 	# yacc.parse(i)
-	yacc.parse(treebuilding.build(i))
+
+	# yacc.parse(treebuilding.build(i))
+
+	print(treebuilding.build(i))
