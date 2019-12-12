@@ -45,21 +45,21 @@ def p_expression_group(p):
 	'expression : LPAREN expression RPAREN'
 	p[0] = p[2]
 
-def p_expression_full(p):
+def p_expression_binary(p):
 	'''expression : expression INF expression
 	| expression COMMA expression
 	| expression IMPLY expression
 	| expression OR expression
 	| expression AND expression'''
-	p[0] = '(' + p[2] + ',' + p[1] + ',' + p[3] + ')'
+	p[0] = '(' + p[2] + ';' + p[1] + ';' + p[3] + ')'
+
+def p_expression_unary(p):
+	'expression : NOT expression'
+	p[0] = '(' + p[1] + p[2] + ')'	
 
 def p_expression_var(p):
 	'expression : VAR'
 	p[0] = p[1]
-
-def p_expression_not(p):
-	'expression : NOT expression'
-	p[0] = '(' + p[1] + p[2] + ')'
 
 def p_error(p):
 	print("Syntax error at '%s'" % p.value)	
