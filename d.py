@@ -99,8 +99,10 @@ def p_axiom_1(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 1')
+			global flag
+			flag = True
 
 def p_axiom_2(p):
 	'axiom : LPAREN IMPLY SCOLON LPAREN IMPLY SCOLON expression SCOLON expression RPAREN SCOLON LPAREN IMPLY SCOLON LPAREN IMPLY SCOLON expression SCOLON LPAREN IMPLY SCOLON expression SCOLON expression RPAREN RPAREN SCOLON LPAREN IMPLY SCOLON expression SCOLON expression RPAREN RPAREN RPAREN'
@@ -108,8 +110,10 @@ def p_axiom_2(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 2')
+			global flag
+			flag = True
 
 def p_axiom_3(p):
 	'axiom : LPAREN IMPLY SCOLON expression SCOLON LPAREN IMPLY SCOLON expression SCOLON LPAREN AND SCOLON expression SCOLON expression RPAREN RPAREN RPAREN'
@@ -117,8 +121,10 @@ def p_axiom_3(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 3')
+			global flag
+			flag = True
 
 def p_axiom_4_5(p):
 	'axiom : LPAREN IMPLY SCOLON LPAREN AND SCOLON expression SCOLON expression RPAREN SCOLON expression RPAREN'
@@ -126,14 +132,18 @@ def p_axiom_4_5(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 4')
+			global flag
+			flag = True
 	elif p[9] == p[12]:
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 5')
+			global flag
+			flag = True
 
 def p_axiom_6_7(p):
 	'axiom : LPAREN IMPLY SCOLON expression SCOLON LPAREN OR SCOLON expression SCOLON expression RPAREN RPAREN'
@@ -141,14 +151,18 @@ def p_axiom_6_7(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 6')
+			global flag
+			flag = True
 	elif p[4] == p[11]:
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 7')
+			global flag
+			flag = True
 
 def p_axiom_8(p):
 	'axiom : LPAREN IMPLY SCOLON LPAREN IMPLY SCOLON expression SCOLON expression RPAREN SCOLON LPAREN IMPLY SCOLON LPAREN IMPLY SCOLON expression SCOLON expression RPAREN SCOLON LPAREN IMPLY SCOLON LPAREN OR SCOLON expression SCOLON expression RPAREN SCOLON expression RPAREN RPAREN RPAREN'
@@ -156,8 +170,10 @@ def p_axiom_8(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 8')
+			global flag
+			flag = True
 
 def p_axiom_9(p):
 	'axiom : LPAREN IMPLY SCOLON LPAREN IMPLY SCOLON expression SCOLON expression RPAREN SCOLON LPAREN IMPLY SCOLON LPAREN IMPLY SCOLON expression SCOLON LPAREN NOT expression RPAREN RPAREN SCOLON LPAREN NOT expression RPAREN RPAREN RPAREN'
@@ -165,8 +181,10 @@ def p_axiom_9(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 9')
+			global flag
+			flag = True
 
 def p_axiom_10(p):
 	'axiom : LPAREN IMPLY SCOLON LPAREN NOT LPAREN NOT expression RPAREN RPAREN SCOLON expression RPAREN'
@@ -174,8 +192,10 @@ def p_axiom_10(p):
 		p[0] = ''
 		for i in range(1, len(p)):
 			p[0] += p[i]
-		if p[0] == j:
+		if p[0] == i:
 			print('Ax. sch. 10')
+			global flag
+			flag = True
 
 
 
@@ -272,7 +292,8 @@ def p_error(p):
 
 yacc.yacc()
 yacc.parse(treebuilding.build(task))
-for i in inputList:
+inputList = [treebuilding.build(i) for i in inputList]
+for i in range(inputList):
 # 	# x = treebuilding.build(i)
 # 	# print(x)
 # 	# lexer1.input(x)
@@ -287,11 +308,22 @@ for i in inputList:
 # 	# 	print(i[0], ' : ', i[1])
 # 	# print('-' * 50)
 	# yacc.parse(i)
-	j = treebuilding.build(i)
-	if j in hlist:
-		print('Hypothesis ' + str(hlist.index(j) + 1))
-	for m in 
-
+	n = inputList.index(i)
+	flag = False
+	if i in hlist:
+		flag = True
+		print('[' + str(n + 1) + '. Hypothesis ' + str(hlist.index(i) + 1) + ']')
+		break
+	for p in range(n):
+		for q in range(p + 1, n):
+			if inputList[q] == '(->;' + inputList[p] + ';' + i + ')': 
+				flag = True
+				print('[' + str(n + 1) + '. M.P. ' + str(q) + ', ' + str(p) + ']')
+				break
+			elif inputList[p] == '(->;' + inputList[q] + ';' + i + ')':
+				flag = True
+				print('[' + str(n + 1) + '. M.P. ' + str(p) + ', ' + str(q) + ']')
+				break
 	# try:
 	# 	yacc.parse(j)
 	# except:
