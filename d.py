@@ -33,24 +33,19 @@ def t_error(t):
 lexer1 = lex.lex()
 
 inputList = [
-'A->B->A',
-'(A->B)->(A->B->C)->(A->C)',
-'A->B->A&B',
-'A&B->A',
 'A->B',
-'A&B->B',
-'A->A|B',
-'B->A|B',
+'C',
+'C->!C|A',
 '(A->C)->(B->C)->(A|B->C)',
-'(A->B)->(A->!B)->!A',
-'!!A->A',
 '(A->B)->!!!B'
 '(A&B->A)->((A->C)->(B->C)->(A|B->C))->(A&B->A)',
 '!B',
-'!!!B'
+'A',
+'!A'
+'B'
 ]
 
-task = 'A->B, !B, !C |- !A'
+task = 'A->B, A, !C |- !A'
 
 hlist = []
 
@@ -194,96 +189,6 @@ def p_axiom_10(p):
 			print('[' + str(n + 1) + '. Ax. sch. 10]')
 			makeTrue()
 
-
-
-
-
-
-
-#direct representation
-
-# def p_axiom_1(p):
-# 	'axiom : expression IMPLY expression IMPLY expression'
-# 	if p[1] == p[5]:
-# 		print('Ax. sch. 1')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_2(p):
-# 	'axiom : LPAREN expression IMPLY expression RPAREN IMPLY LPAREN expression IMPLY expression IMPLY expression RPAREN IMPLY LPAREN expression IMPLY expression RPAREN'
-# 	if p[2] == p[8] == p[16] and p[4] == p[10] and p[12] == p[18]:
-# 		print('Ax. sch. 2')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_3(p):
-# 	'axiom : expression IMPLY expression IMPLY expression AND expression'
-# 	if p[1] == p[5] and p[3] == p[7]:
-# 		print('Ax. sch. 3')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_4_5(p):
-# 	'axiom : expression AND expression IMPLY expression'
-# 	if p[1] == p[5]:
-# 		print('Ax. sch. 4')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-# 	elif p[3] == p[5]:
-# 		print('Ax. sch. 5')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_6_7(p):
-# 	'axiom : expression IMPLY expression OR expression'
-# 	if p[1] == p[3]:
-# 		print('Ax. sch. 6')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-# 	elif p[1] == p[5]:
-# 		print('Ax. sch. 7')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_8(p):
-# 	'axiom : LPAREN expression IMPLY expression RPAREN IMPLY LPAREN expression IMPLY expression RPAREN IMPLY LPAREN expression OR expression IMPLY expression RPAREN'
-# 	if p[2] == p[14] and p[8] == p[16] and p[4] == p[10] == p[18]:
-# 		print('Ax. sch. 8')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_9(p):
-# 	'axiom : LPAREN expression IMPLY expression RPAREN IMPLY LPAREN expression IMPLY NOT expression RPAREN IMPLY NOT expression'
-# 	if p[2] == p[8] == p[15] and p[4] == p[11]:
-# 		print('Ax. sch. 9')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_axiom_10(p):
-# 	'axiom : NOT NOT expression IMPLY expression'
-# 	if p[3] == p[5]:
-# 		print('Ax. sch. 10')
-# 		p[0] = ''
-# 		for i in range(1, len(p)):
-# 			p[0] += p[i]
-
-# def p_expression_axiom(p):
-# 	'expression : LPAREN axiom RPAREN'
-# 	p[0] = p[1] + p[2] + p[3]
-
-# def p_expression_var(p):
-# 	'expression : VAR'
-# 	p[0] = p[1]
-
 def p_error(p):
 	print("Syntax error at '%s'" % p)
 
@@ -305,12 +210,39 @@ for k in inputList:
 		for q in range(p + 1, n):
 			if inputList[q] == '(->;' + inputList[p] + ';' + k + ')': 
 				flag = True
-				print('[' + str(n + 1) + '. M.P. ' + str(q) + ', ' + str(p) + ']')
+				print('[' + str(n + 1) + '. M.P. ' + str(q + 1) + ', ' + str(p + 1) + ']')
 				break
 			elif inputList[p] == '(->;' + inputList[q] + ';' + k + ')':
 				flag = True
-				print('[' + str(n + 1) + '. M.P. ' + str(p) + ', ' + str(q) + ']')
+				print('[' + str(n + 1) + '. M.P. ' + str(p + 1) + ', ' + str(q + 1) + ']')
 				break
 		else:
 			continue
 		break
+	if flag:
+		continue
+	inputList.remove(k)
+output = []
+def inferenceBuilding(s):
+	flag = False
+	n = inputList.index(s)
+	if s in hlist:
+		output.append(('Hypothesis ' + str(hlist.index(s) + 1), s))
+	yacc.parse(s)
+	if flag:
+		continue
+	for p in range(n):
+		for q in range(p + 1, n):
+			if inputList[q] == '(->;' + inputList[p] + ';' + s + ')': 
+				flag = True
+				print('[' + str(n + 1) + '. M.P. ' + str(q + 1) + ', ' + str(p + 1) + ']')
+				break
+			elif inputList[p] == '(->;' + inputList[q] + ';' + s + ')':
+				flag = True
+				print('[' + str(n + 1) + '. M.P. ' + str(p + 1) + ', ' + str(q + 1) + ']')
+				break
+		else:
+			continue
+		break
+	if flag:
+		continue
